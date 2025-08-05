@@ -104,6 +104,67 @@ def load_css():
         .main-content-padding {{
             padding-top: 8rem;
         }}
+        
+        /* ================================================================== */
+        /* ==               FINAL CSS FIXES FOR WIDGETS                  == */
+        /* ================================================================== */
+        
+        /* Fix for Dropdown Menu OPTIONS LIST */
+        div[data-baseweb="popover"] ul li,
+        [data-testid="stVirtualDropdown"] li,
+        div[data-baseweb="popover"] ul li div,
+        [data-testid="stVirtualDropdown"] li div,
+        div[data-baseweb="popover"] ul li span,
+        [data-testid="stVirtualDropdown"] li span {{
+            color: #BB86FC !important; /* 紫色 */
+            background-color: white !important;
+        }}
+        
+        /* Fix for Hover/Focus state in Dropdown */
+        div[data-baseweb="popover"] ul li:hover,
+        [data-testid="stVirtualDropdown"] li:hover {{
+            background-color: #f0f2f6 !important;
+        }}
+        
+        /* Fix for the SELECTED ITEM display in Selectbox */
+        [data-testid="stSelectbox"] div[data-baseweb="select"] > div {{
+            background-color: transparent; 
+        }}
+        [data-testid="stSelectbox"] div[data-baseweb="select"] > div > div {{
+             color: #BB86FC !important; 
+        }}
+
+        /* Style for the main Selectbox container to match buttons */
+        [data-testid="stSelectbox"] {{
+            border-radius: 8px !important;
+            border: 2px solid #BB86FC !important;
+            background-color: transparent !important;
+        }}
+
+        /* Style for the main MultiSelect container (新增的代码) */
+        [data-testid="stMultiSelect"] {{
+            border-radius: 8px !important;
+            border: 2px solid #BB86FC !important;
+            background-color: transparent !important;
+            padding: 0.1em 0.6em;
+        }}
+        
+        /* Fix for Link Button */
+        .stLinkButton a {{
+            border-radius: 8px !important;
+            border: 2px solid #BB86FC !important;
+            background-color: transparent !important;
+            color: #BB86FC !important;
+            transition: all 0.3s !important;
+            font-weight: 600 !important;
+            width: 100% !important;
+            padding: 0.75em 1em !important;
+        }}
+        .stLinkButton a:hover {{
+            background-color: #BB86FC !important;
+            color: #121212 !important;
+        }}
+        /* ================================================================== */
 
         /* --- Metric Cards --- */
         .metric-card {{
@@ -252,8 +313,19 @@ def run_full_data_pipeline():
 
 def page_home():
     """Renders the Home page."""
-    st.markdown("<h1 style='text-align: center; padding-top: 2rem;'>Welcome to <span class='title-word-orange'>First</span> <span class='title-word-purple'>Win</span> <span class='title-word-orange'>in Crypto</span></h1>", unsafe_allow_html=True)
+    st.markdown("""
+        <h1 style='text-align: center; padding-top: 2rem;'>
+            Welcome to your 
+            <span style='color: #FF9900;'>First</span> 
+            <span style='color: #BB86FC;'>Win</span> 
+            <span style='color: #FF9900;'>in Crypto</span>
+        </h1>
+    """, unsafe_allow_html=True)
+    
     st.markdown("<p style='text-align: center; font-size: 1.2rem; color: #AAAAAA;'>Your Multi-Factor Driven Investment Co-Pilot</p>", unsafe_allow_html=True)
+    
+    st.markdown("<p style='text-align: center; font-size: 0.9rem; color: #888888;'><i>Switch to dark mode for a better viewing experience.</i></p>", unsafe_allow_html=True)
+    
     st.markdown("---")
     
     st.markdown("""
@@ -263,7 +335,7 @@ def page_home():
         Navigate using the menu above to explore backtested strategies, view current market sentiment, and discover portfolio recommendations tailored to your risk profile.
     </div>
     """, unsafe_allow_html=True)
-
+    
 def page_login():
     """Renders the Login page."""
     with st.container():
@@ -495,7 +567,7 @@ def main_app_view(engine, sentiment_df):
 
     st.markdown('<div class="main-content-padding"></div>', unsafe_allow_html=True)
 
-    # --- PAGE CONTENT ROUTER ---
+    # --- PAGE CONTENT ROUTER  ---
     # Handle special pages (Login/Register) first
     if st.session_state.current_page in ["Login", "Register"]:
         if st.session_state.current_page == "Login":
@@ -503,10 +575,8 @@ def main_app_view(engine, sentiment_df):
         elif st.session_state.current_page == "Register":
             page_register()
     else:
-        # Main application pages are accessible to everyone
         options = ["Home", "Dashboard", "Strategy Studio", "This Week's Portfolio"]
         
-        # Ensure current_page is valid, otherwise default to Home
         try:
             default_idx = options.index(st.session_state.current_page)
         except ValueError:
@@ -516,20 +586,23 @@ def main_app_view(engine, sentiment_df):
         selected_page = option_menu(
             menu_title=None, 
             options=options, 
-            icons=None,
+            icons=['house', 'bar-chart-line', 'tools', 'briefcase'], # 您可以添加一些图标
             default_index=default_idx,
             orientation="horizontal"
         )
-        st.session_state.current_page = selected_page
 
-        # Render the selected page
-        if selected_page == "Home":
+        if st.session_state.current_page != selected_page:
+            st.session_state.current_page = selected_page
+            st.rerun()
+
+     
+        if st.session_state.current_page == "Home":
             page_home()
-        elif selected_page == "Dashboard":
+        elif st.session_state.current_page == "Dashboard":
             page_dashboard(engine, sentiment_df)
-        elif selected_page == "Strategy Studio":
+        elif st.session_state.current_page == "Strategy Studio":
             page_strategy_studio()
-        elif selected_page == "This Week's Portfolio":
+        elif st.session_state.current_page == "This Week's Portfolio":
             page_current_portfolio(engine)
         
         # Footer disclaimer
