@@ -233,15 +233,18 @@ CHARTS_PATH = Path("Project_result") / "charts"
 # --- Caching & Data Loading ---
 @st.cache_data(ttl=86400)
 def run_full_data_pipeline():
-    if not FINAL_DATA_PATH.exists():
+    final_path = Path(FINAL_DATA_PATH)
+    sentiment_path = Path(SENTIMENT_DATA_PATH)
+
+    if not final_path.exists():
         st.error(f"Data file not found at expected path: '{FINAL_DATA_PATH}'.")
         st.stop()
-    master_df = pd.read_csv(FINAL_DATA_PATH, parse_dates=['date'])
+    master_df = pd.read_csv(final_path, parse_dates=['date'])
     
-    if not SENTIMENT_DATA_PATH.exists():
+    if not sentiment_path.exists():
         sentiment_df = pd.DataFrame()
     else:
-        sentiment_df = pd.read_csv(SENTIMENT_DATA_PATH, parse_dates=['period'])
+        sentiment_df = pd.read_csv(sentiment_path, parse_dates=['period'])
     
     return master_df, sentiment_df
 
