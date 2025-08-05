@@ -227,8 +227,8 @@ def metric_card(title, value, value_class=""):
 
 # --- Constants & File Paths ---
 PROJECT_ROOT = Path("Project_folder") 
-FINAL_DATA_PATH = PROJECT_ROOT / "structured_data" / "clean_data" / "crypto_news_weekly_top.csv"
-SENTIMENT_DATA_PATH = PROJECT_ROOT / "unstructured_data" / "news_clean_data" / "aggregated_weekly.csv"
+FINAL_DATA_PATH =  "crypto_news_weekly_top.csv"
+SENTIMENT_DATA_PATH = "aggregated_weekly.csv"
 CHARTS_PATH = Path("Project_result") / "charts"
 
 # --- Caching & Data Loading ---
