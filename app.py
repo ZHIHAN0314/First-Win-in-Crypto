@@ -398,7 +398,7 @@ def page_dashboard(engine, sentiment_df):
     selected_symbols = st.multiselect(
         "Select cryptocurrencies to compare:",
         options=all_symbols,
-        default=['AAVE', 'INJ', 'BCH'] if all(s in all_symbols for s in ['AAVE', 'INJ', 'BCH']) else ([all_symbols[0]] if all_symbols else [])
+        default=['ETH', 'BTC'] if all(s in all_symbols for s in ['ETH', 'BTC']) else ([all_symbols[0]] if all_symbols else [])
     )
 
     if selected_symbols:
