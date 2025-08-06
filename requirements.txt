@@ -9,3 +9,4 @@ tqdm
 matplotlib
 seaborn
 streamlit-option-menu
+plotly

@@ -33,7 +33,7 @@ def main():
     MARKET_SENTIMENTS = ['positive', 'neutral', 'negative']
 
     # NEW: Custom risk tolerance levels to test (0-10 scale)
-    CUSTOM_RISK_LEVELS = [2, 5, 8]  # Low, Medium, High examples
+    CUSTOM_RISK_LEVELS = [0, 5, 8]  # Low, Medium, High examples
 
     # Enhanced multi-factor portfolio parameters
     MULTI_FACTOR_PARAMS = {

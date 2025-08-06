@@ -87,6 +87,8 @@ class CryptoStrategyEngine:
         print("Loading data...")
         self.data = pd.read_csv(self.data_path)
         self.data['date'] = pd.to_datetime(self.data['date'])
+        self.data = self.data[self.data['symbol'].str.upper() != 'GOHM']
+        print("Filtered out GOHM from the dataset.")
         
         # VERY IMPORTANT: Sort by symbol and then date to ensure correct shifting
         self.data = self.data.sort_values(['symbol', 'date']).reset_index(drop=True)
