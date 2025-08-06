@@ -11,6 +11,8 @@ import time
 import random
 from streamlit_option_menu import option_menu
 import base64
+import plotly.express as px  # 导入plotly.express
+
 
 # Attempt to import modules, providing a clear error message on failure
 try:
@@ -394,29 +396,81 @@ def page_dashboard(engine, sentiment_df):
     st.header("Market Overview & Sentiment Analysis")
     all_symbols = sorted(engine.data['symbol'].unique())
     selected_symbols = st.multiselect(
-        "Select cryptocurrencies to compare:", 
-        options=all_symbols, 
-        default=['BTC', 'ETH'] if 'BTC' in all_symbols and 'ETH' in all_symbols else ([all_symbols[0]] if all_symbols else [])
+        "Select cryptocurrencies to compare:",
+        options=all_symbols,
+        default=['AAVE', 'INJ', 'BCH'] if all(s in all_symbols for s in ['AAVE', 'INJ', 'BCH']) else ([all_symbols[0]] if all_symbols else [])
     )
-    
+
     if selected_symbols:
         st.subheader("Price History (Normalized) & Market Sentiment")
         chart_col, sentiment_col = st.columns([2, 1])
+
         with chart_col:
+            # --- FINAL DATA LOGIC FIX STARTS HERE ---
             comparison_df = engine.data[engine.data['symbol'].isin(selected_symbols)]
             price_pivot = comparison_df.pivot(index='date', columns='symbol', values='close')
-            normalized_prices = price_pivot / price_pivot.iloc[0]
-            st.line_chart(normalized_prices)
+
+            # Create an empty DataFrame to store normalized prices
+            normalized_prices = pd.DataFrame(index=price_pivot.index)
+
+            # Iterate through each selected symbol to normalize it individually
+            for symbol in price_pivot.columns:
+                # Find the first valid (non-NaN) price for this specific symbol
+                first_valid_index = price_pivot[symbol].first_valid_index()
+                if first_valid_index is not None:
+                    first_price = price_pivot.loc[first_valid_index, symbol]
+                    # Normalize this symbol's series by its own first price
+                    normalized_prices[symbol] = price_pivot[symbol] / first_price * 100
+
+            # Reset index to make 'date' a column for Plotly
+            df_to_plot = normalized_prices.reset_index()
+
+            # Melt the DataFrame from wide to long format for Plotly
+            df_melted = df_to_plot.melt(
+                id_vars='date',
+                value_vars=normalized_prices.columns,
+                var_name='Symbol',
+                value_name='Normalized Price'
+            )
+
+            # Create the interactive plot
+            fig = px.line(
+                df_melted,
+                x='date',
+                y='Normalized Price',
+                color='Symbol',
+                title="Price History (Normalized)",
+                labels={'Normalized Price': 'Normalized Price (Basis 100)', 'date': 'Date'}
+            )
+
+            # Update layout for our dark theme
+            fig.update_layout(
+                plot_bgcolor='#1E1E1E',
+                paper_bgcolor='#121212',
+                font_color='white',
+                xaxis=dict(gridcolor='#444444'),
+                yaxis=dict(gridcolor='#444444'),
+                legend_title_text='Symbols'
+            )
+
+            # Enable x-axis range slider
+            fig.update_xaxes(rangeslider_visible=True)
+
+            st.plotly_chart(fig, use_container_width=True)
+            # --- FINAL DATA LOGIC FIX ENDS HERE ---
+
         with sentiment_col:
+            st.markdown("<br/>", unsafe_allow_html=True)
             if not sentiment_df.empty:
                 latest_overall_sentiment = sentiment_df.sort_values('period', ascending=False).iloc[0].get('market_avg_compound', 0)
                 gauge_fig = create_sentiment_gauge(latest_overall_sentiment, "Overall Market")
                 st.pyplot(gauge_fig)
             else:
                 st.warning("Overall market sentiment data is not available.")
-        
+
         st.markdown("---")
         st.subheader("Individual Crypto Sentiment Gauges")
+        # ... (rest of the function remains the same)
         gauge_count = len(selected_symbols)
         gauges_per_row = 4
         for i in range(gauge_count):
