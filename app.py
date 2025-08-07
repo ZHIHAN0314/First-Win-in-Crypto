@@ -496,7 +496,7 @@ def page_strategy_studio():
     charts_to_display = {
         "Top Single Factor Strategies vs Benchmarks: Cumulative Returns": "https://res.cloudinary.com/doiniwmm5/image/upload/v1754314887/cumulative_returns_yfxbse.png",
         "Top Single Factor vs Multi-Factor: Drawdown Analysis": "https://res.cloudinary.com/doiniwmm5/image/upload/v1754314892/drawdown_analysis_ixo8gi.png",
-        "Risk-Based Strategy Performance Comparison": "https://res.cloudinary.com/doiniwmm5/image/upload/v1754314890/rolling_sharpe_dashboard_chzutj.png",
+        "Strategy Performance Comparison": "https://res.cloudinary.com/doiniwmm5/image/upload/v1754314890/rolling_sharpe_dashboard_chzutj.png",
         "Top Single Factor Strategies: Performance Metrics Radar Chart": "https://res.cloudinary.com/doiniwmm5/image/upload/v1754314888/performance_radar_m1jirp.png",
         "Top Single Factor vs Multi-Factor: Rolling Sharpe & Volatility": "https://res.cloudinary.com/doiniwmm5/image/upload/v1754314890/rolling_sharpe_dashboard_chzutj.png",
         "Top Single Factor Strategies: Monthly Return Candles": "https://res.cloudinary.com/doiniwmm5/image/upload/v1754316227/monthly_returns_candles_c3gaha.png",
